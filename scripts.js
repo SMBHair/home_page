@@ -132,6 +132,9 @@ function time() {
     if (y.getHours() > 12) {
         z = y.getHours() - 12 + ":" + y.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2}) + ":" + y.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2}) + "PM";
     }
+    if (y.getHours() == 0) {
+        z = "12:"+ y.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2}) + ":" + y.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2}) + "AM";
+    }
     x.innerHTML = weekdays[y.getDay()] + " " + (y.getMonth() + 1) + "-" + y.getDate() + "-" + y.getFullYear() + " " + z;
 }
 
