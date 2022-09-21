@@ -2,7 +2,7 @@ function save() {
 
     localStorage.setItem("localdata", document.getElementById("data").value);
     raw = localStorage.getItem("localdata");
-    organize()
+    if (raw != null) organize();
 
 }
 
@@ -89,7 +89,7 @@ function organize() {
         }
 
         /* titles */
-        if (raw.lastIndexOf("//", arrows[i]) > 0) {
+        if (raw.lastIndexOf("//", arrows[i]) >= 0) {
             title = raw.substring(raw.lastIndexOf("//", arrows[i]) + 2, raw.indexOf("\n", raw.lastIndexOf("//", arrows[i])));
         }
         else {
@@ -142,7 +142,7 @@ const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frida
 var raw = localStorage.getItem("localdata");
 document.getElementById("data").value = raw;
 
-organize();
+if (raw != null) organize();
 time();
 
 document.getElementById("data").addEventListener("input", (e) => {save()});
