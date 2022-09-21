@@ -1,9 +1,7 @@
 function save() {
-
     localStorage.setItem("localdata", document.getElementById("data").value);
     raw = localStorage.getItem("localdata");
     if (raw != null) organize();
-
 }
 
 function organize() {
@@ -57,7 +55,7 @@ function organize() {
     }
 
     for (let i = 0; i < arrows.length; i++) {
-        var title, date, description;
+        var title, description, date;
 
         /* descriptions */
         if (raw.lastIndexOf("\n", arrows[i]) > 0) {
@@ -69,12 +67,12 @@ function organize() {
 
         /* dates */
         if (raw.indexOf("\n", arrows[i] + 3) > 0) {
-            date = raw.substring(arrows[i] + 3, raw.indexOf("\n", arrows[i] + 3));
+            date = raw.substring(arrows[i] + 3, raw.indexOf("\n", arrows[i] + 3)).trim();
         }
         else {
-            date = raw.substring(arrows[i] + 3, raw.length);
+            date = raw.substring(arrows[i] + 3, raw.length).trim();
         }
-
+    
         let y = date.substring(0, date.indexOf("-"));
         if (y.length > 0) {
             if (y >= today.getMonth() + 1) {
@@ -84,16 +82,10 @@ function organize() {
                 date = today.getFullYear() + 1 + "-" + date;
             }
         }
-        else {
-            date = NaN;
-        }
 
         /* titles */
         if (raw.lastIndexOf("//", arrows[i]) >= 0) {
-            title = raw.substring(raw.lastIndexOf("//", arrows[i]) + 2, raw.indexOf("\n", raw.lastIndexOf("//", arrows[i])));
-        }
-        else {
-            title = undefined;
+                title = raw.substring(raw.lastIndexOf("//", arrows[i]) + 2, raw.indexOf("\n", raw.lastIndexOf("//", arrows[i])));
         }
 
         const x = new task(title, date, description);
@@ -102,27 +94,29 @@ function organize() {
 
     for (i = 0; i < tasks.length; i++) {
         if (!(tasks[i].date_time > -1)) {
-            tasks.splice(i, i);
-            i--;
+            tasks.splice(i, 1);
         }
     }
+
     tasks = tasks.sort(function(a, b) {
         return a.date_time - b.date_time;
     });
 
-    for (i = 0; i < tasks.length; i++) {
+    if (tasks[0].date_time > 0) {
+        tasks[0].convertDate();
+        tasks[0].displayDate();
+        tasks[0].displayTitle();
+        tasks[0].displayDescription();
+    }
+
+    for (i = 1; i < tasks.length; i++) {
         tasks[i].convertDate();
-        if (i > 0) {
-            if (tasks[i].date != tasks[i - 1].date) {
-                tasks[i].displayDate();
-            }
-        } else {
+        if (tasks[i].date != tasks[i - 1].date) {
             tasks[i].displayDate();
         }
         tasks[i].displayTitle();
         tasks[i].displayDescription();
     }
-
 }
 
 function time() {
