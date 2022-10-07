@@ -13,10 +13,12 @@ function organize() {
     var tasks = [];
 
     class task {
-        constructor(title, date, description) {
+        constructor(title, date, description, highlight, id) {
             this.title = title;
             this.date = date;
             this.description = description;
+            this.highlight = highlight;
+            this.id = "container" + id;
         }
 
         date_time = Date.parse(date);
@@ -27,35 +29,49 @@ function organize() {
             this.date = weekdays[x.getDay()] + " " + (x.getMonth() + 1)+ "-" + x.getDate();
         }   
 
+        createContainer() {
+            let x = document.createElement("div");
+            x.setAttribute("id", this.id);
+            document.getElementById("todo").appendChild(x);
+        }
+
         displayDate() {
             let x = document.createElement("div");
             x.setAttribute("class", "date");
             x.innerHTML = this.date;
-            document.getElementById("todo").appendChild(x);
+            document.getElementById(this.id).appendChild(x);
         }
 
         displayTitle() {
             let x = document.createElement("div");
             x.setAttribute("class", "title");
             x.innerHTML = this.title;
-            document.getElementById("todo").appendChild(x);
+            document.getElementById(this.id).appendChild(x);
         }
 
         displayDescription() {
             var x = document.createElement("div");
+            var y = document.createElement("span");
             x.setAttribute("class", "description");
-            x.innerHTML = this.description;
-            document.getElementById("todo").appendChild(x);
+            y.innerHTML = this.description;
+            if (this.highlight) {
+                y.setAttribute("class", "description highlight");
+            }
+            document.getElementById(this.id).appendChild(x);
+            x.appendChild(y);
         }
     }
 
+    /* find arrows */
     var arrows = []; 
     for (let i = 0; i < raw.length; i++) {
         if (raw[i] == "-" && raw[i + 1] == "-" && raw[i + 2] == ">") arrows.push(i);
     }
 
     for (let i = 0; i < arrows.length; i++) {
-        var title, description, date;
+        var title, date, description, highlight, id;
+        highlight = false;
+        id = i;
 
         /* descriptions */
         if (raw.lastIndexOf("\n", arrows[i]) > 0) {
@@ -83,35 +99,38 @@ function organize() {
             }
         }
 
+        /* if date has hashtag @ end, remove hashtag + highlight */
+        if (date.substring(date.length - 1, date.length) == "#") {
+            date = date.substring(0, date.length-1).trim();
+            highlight = true;
+        }
+
         /* titles */
         if (raw.lastIndexOf("//", arrows[i]) >= 0) {
                 title = raw.substring(raw.lastIndexOf("//", arrows[i]) + 2, raw.indexOf("\n", raw.lastIndexOf("//", arrows[i])));
         }
 
-        const x = new task(title, date, description);
+        const x = new task(title, date, description, highlight, id);
         tasks.push(x);
     }
 
+    /* tasks list reorganize */
     for (i = 0; i < tasks.length; i++) {
         if (!(tasks[i].date_time > -1)) {
             tasks.splice(i, 1);
         }
     }
-
     tasks = tasks.sort(function(a, b) {
         return a.date_time - b.date_time;
     });
 
-    if (tasks[0].date_time > 0) {
-        tasks[0].convertDate();
-        tasks[0].displayDate();
-        tasks[0].displayTitle();
-        tasks[0].displayDescription();
-    }
-
-    for (i = 1; i < tasks.length; i++) {
+    /* creating tasks */
+    for (i = 0; i < tasks.length; i++) {
+        tasks[i].createContainer();
         tasks[i].convertDate();
-        if (tasks[i].date != tasks[i - 1].date) {
+        if (i == 0) {
+            tasks[0].displayDate();
+        } else if (tasks[i].date != tasks[i - 1].date) {
             tasks[i].displayDate();
         }
         tasks[i].displayTitle();
