@@ -2,10 +2,10 @@
  simple home page layout that reformats text input
 
 //this indicates a title<br>
-task --> task date
+task --> task date <br>
 
-//highlight with # after the date
-task --> task date #
+//highlight with # after the date <br>
+task --> task date # <br>
 
 credit to<br>
 @tpartee on stackoverflow for date conversion code,<br>
